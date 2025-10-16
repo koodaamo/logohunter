@@ -3,7 +3,7 @@ requires = ["uv_build>=0.9.3,<0.10.0"]
 build-backend = "uv_build"
 
 [project]
-name = "logo-hunter"
+name = "logohunter"
 version = "0.1.0"
 description = "A modern, async Python library for fetching and processing customer logos from websites."
 authors = [
