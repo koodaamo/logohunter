@@ -133,7 +133,14 @@ def advertisement_context(
     **kwargs,
 ) -> int:
     """Apply penalty for advertisement-related images"""
-    ad_patterns = ["advertisement", "banner", "promo", "sponsor", "affiliate"]
+    ad_patterns = [
+        "advertisement",
+        "banner",
+        "promo",
+        "sponsor",
+        "affiliate",
+        "campaign",
+    ]
 
     # Check filename
     filename = urlparse(url).path.lower()
@@ -221,12 +228,11 @@ def single_color_svg(
         else:
             normalized_colors.add(color)
 
-    # If only one color is used, apply penalty
+    # Only penalize single-color SVGs that are white or black
     if len(normalized_colors) <= 1:
-        # Extra penalty for white-only (common issue - won't show on white backgrounds)
         if "white" in normalized_colors or "#fff" in colors or "#ffffff" in colors:
-            return 1.0  # Maximum penalty for white-only
-        # Regular penalty for any other single color
-        return 0.75
+            return 1.0  # Penalty for white-only
+        elif "black" in normalized_colors or "#000" in colors or "#000000" in colors:
+            return 1.0  # Penalty for black-only
 
     return False

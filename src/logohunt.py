@@ -163,7 +163,7 @@ def display_detailed_scoring(
 
 
 async def fetch_best_logo(
-    candidates: List[Icon], domain: str, save_file: str | None, console: Console
+    candidates: List[Icon], domain: str, save_dir: str | None, console: Console
 ) -> None:
     """Fetch and optionally save the best logo."""
     if not candidates:
@@ -211,7 +211,7 @@ async def fetch_best_logo(
 
     console.print(Panel(details_table, title="Logo Details", border_style="green"))
 
-    if save_file:
+    if save_dir:
         # Process and save the image
         with Progress(
             SpinnerColumn(),
@@ -221,15 +221,23 @@ async def fetch_best_logo(
         ) as progress:
             task = progress.add_task("Saving logo...", total=None)
 
+            # Determine output directory
+            if save_dir:
+                output_dir = Path(save_dir)
+                output_dir.mkdir(parents=True, exist_ok=True)
+            else:
+                output_dir = Path(".")
+
             if isinstance(best_logo, str):
-                # For SVG, save as SVG file regardless of requested format
-                output_path = Path(save_file)
-                if not output_path.suffix.lower().endswith(".svg"):
-                    output_path = output_path.with_suffix(".svg")
+                # For SVG, save as logo.svg
+                output_path = output_dir / "logo.svg"
                 output_path.write_text(best_logo, encoding="utf-8")
             else:
-                # For PIL images, save as-is without processing
-                output_path = Path(save_file)
+                # For PIL images, determine extension from format
+                ext = best_logo.format.lower() if best_logo.format else "png"
+                if ext == "jpeg":
+                    ext = "jpg"
+                output_path = output_dir / f"logo.{ext}"
                 best_logo.save(output_path)
 
         console.print(
@@ -245,9 +253,9 @@ async def main() -> None:
         epilog="""
 Examples:
   uv run logohunt github.com
-  uv run logohunt reddit.com --save logo.png
+  uv run logohunt reddit.com --save
   uv run logohunt discord.com --verbose
-  uv run logohunt openai.com --save-as openai_logo.png --all-scores
+  uv run logohunt openai.com --save logos/ --all-scores
         """,
     )
 
@@ -257,10 +265,10 @@ Examples:
 
     parser.add_argument(
         "--save",
-        "--save-as",
-        dest="save_file",
-        metavar="FILE",
-        help="Save the best logo to specified file (default: PNG format)",
+        nargs="?",
+        const=".",
+        metavar="DIR",
+        help="Save the best logo as 'logo.ext' in current directory or specified directory",
     )
 
     parser.add_argument(
@@ -303,7 +311,7 @@ Examples:
             display_detailed_scoring(candidates, console, show_all=args.all_scores)
 
         # Fetch and optionally save the best logo
-        await fetch_best_logo(candidates, args.domain, args.save_file, console)
+        await fetch_best_logo(candidates, args.domain, args.save, console)
 
     except KeyboardInterrupt:
         console.print("\n[red]❌ Operation cancelled by user[/red]")

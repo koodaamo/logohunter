@@ -1,7 +1,7 @@
-150 logo_in_filename
-150 logo_in_css_classes
-150 logo_in_element_id
-150 logo_in_alt_text
-60 header_proximity
+100 logo_in_filename
+100 logo_in_css_classes
+100 logo_in_element_id
+40 logo_in_alt_text
+80 header_proximity
 50 brand_keywords
-40 parent_logo_context
+80 parent_logo_context

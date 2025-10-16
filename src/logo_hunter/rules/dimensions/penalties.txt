@@ -1,5 +1,6 @@
 -300 social_media_dimensions
 -200 banner_dimensions
 -80 extremely_wide_aspect_ratio
+-50 small_images
 -150 very_small_images
 -20 odd_dimensions

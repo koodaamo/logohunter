@@ -30,6 +30,27 @@ def very_small_images(
     return False
 
 
+def small_images(
+    img: Image.Image,
+    width: int,
+    height: int,
+    url: str,
+    alt_text: str,
+    css_classes: str,
+    element_id: str,
+    parent_classes: list[str],
+    **kwargs,
+) -> int:
+    """Apply penalty for small images (smaller than 64x64)"""
+    if not width or not height:
+        return 0
+
+    if width < 64 and height < 64:
+        return 1.0
+
+    return False
+
+
 def extremely_wide_aspect_ratio(
     img: Image.Image,
     width: int,
