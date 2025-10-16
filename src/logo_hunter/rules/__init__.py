@@ -1,0 +1,1 @@
+"""Logo scoring rules package."""

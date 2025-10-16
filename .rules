@@ -1,0 +1,108 @@
+Project: logo-hunter (Python package to discover and process website logos)
+
+Languages
+- Python 3.8+
+
+Package/Build Tools
+- Packaging: pyproject.toml using hatchling build backend (modern uv-compatible)
+- Test runner: Python unittest with IsolatedAsyncioTestCase for async tests
+- Logging: Python standard logging (basicConfig at DEBUG)
+
+Major Libraries (runtime)
+- httpx: Async HTTP client for high-performance requests
+- selectolax: Fast HTML parsing library
+- pillow (PIL): Image loading/processing with modern resampling
+- stdlib: urllib.parse, io.BytesIO, asyncio, re, typing
+
+Project Structure
+- pyproject.toml: Package metadata with hatchling build backend and declared dependencies
+- LICENSE: MIT license (aligned with pyproject.toml)
+- README.md: Comprehensive documentation with async/sync examples
+- example.py: Demo script showing async/sync usage patterns and batch processing
+- logohunter/
+  - __init__.py: package init (empty)
+  - hunter.py: main library module (modernized)
+    - class Icon: NamedTuple for favicon metadata (url, width, height, format, context, score)
+    - class LogoHunter: Async-first implementation with comprehensive discovery
+      - find_logo_urls(domain): Multi-source discovery with scoring system
+      - fetch_best_logo(logo_urls): Sequential validation with quality checks
+      - process_image(image, output_format, resize_to): Modern PIL processing with LANCZOS resampling
+      - get_customer_logo(domain, output_format, resize_to): Main async orchestration method
+      - _check_manifest(): Web App Manifest parsing for icon discovery
+      - _get_fallback_icons(): Common file location checks
+      - _validate_icon(): Aspect ratio and size validation
+      - _calculate_score(): Comprehensive scoring (format, size, context, penalties)
+      - _find_logo_images_by_class_id(): Logo detection via class/ID patterns (logo, icon, brand, etc.)
+      - _find_logo_images_by_keyword(): Logo keyword detection in img filename, class, id, alt attributes
+  - test_hunter.py: Comprehensive async test suite with mocking
+
+How Things Work (key components)
+- Discovery: Multi-source strategy with manifest, HTML parsing, and fallback locations
+- Parsing: selectolax.parser.HTMLParser for HTML + JSON parsing for manifests
+- Scoring: Comprehensive system prioritizing SVG>PNG>WebP>ICO, size, context, aspect ratio
+- Logo Detection: Class/ID pattern matching + keyword detection in img attributes with smart deduplication
+- Selection: Sequential validation with quality checks, aspect ratio limits, size constraints
+- Processing: Modern PIL with LANCZOS resampling, RGBA->RGB conversion for JPEG, format validation
+- Error handling: Async-safe logging, graceful degradation, validation cascade
+- Logging: INFO for discovery results (count, list, selection), DEBUG for processing details
+- Custom logger support: Optional logger parameter in main method for controlled output
+
+Logo Sources Searched (Priority Order)
+- Web App Manifest (/manifest.json or <link rel="manifest">) - icons array with SVG/largest preference
+- Apple Touch Icons (rel=apple-touch-icon) - 180x180 default, sizes attribute parsing
+- Open Graph/Social Media (og:image, twitter:image) - large branded images
+- Standard Favicon Declarations (rel=icon with SVG priority, sizes attribute)
+- Logo Class/ID Detection - <img> tags within elements with logo-related class/ID patterns
+- Logo Keyword Detection - <img> tags with "logo" in filename, class, id, or alt attributes (upgrades context)
+- Common File Location Fallbacks (/favicon.svg, /logo.svg, /favicon-512x512.png, /favicon.ico)
+- Size extraction from sizes attribute, filename patterns, manifest metadata, and img attributes
+
+Testing
+- Run tests: python -m unittest (from src/logo_hunter directory)
+- Async tests use unittest.IsolatedAsyncioTestCase
+- Comprehensive test coverage: scoring system, manifest parsing, fallback locations, validation
+- Mocks httpx.AsyncClient and PIL operations
+- Tests cover async LogoHunter implementation
+
+Performance Features
+- Async/await throughout for non-blocking I/O
+- Concurrent logo fetching with semaphore limits (priority-ordered processing)
+- Connection pooling via httpx.AsyncClient
+- Fast HTML parsing with selectolax
+- Comprehensive scoring system (format priority, size, context, aspect ratio)
+- Smart deduplication and validation-based selection
+- Web App Manifest support with JSON parsing
+
+CLI Tool
+- `logohunt` command-line interface via `uv run logohunt <domain>`
+- Rich-formatted output with panels, tables, and progress indicators
+- Displays all logo candidates with color-coded scoring panels
+- Tree-based detailed scoring breakdown showing rule contributions
+- Optional --save flag to save best logo to file
+- --verbose and --all-scores flags for detailed analysis
+- Entry point configured in pyproject.toml [project.scripts]
+- Uses Rich library for beautiful terminal formatting
+
+Build/Packaging & Deployment
+- Build: uv build (uses hatchling backend)
+- Dependencies and dev tools properly configured in pyproject.toml
+- Python 3.8+ requirement (uses modern union syntax: str | None)
+- Includes development tools: black, ruff, mypy, pytest with async support
+
+Style & Guidelines
+- Async-only design (no sync wrappers)
+- Type hints using modern union syntax (Python 3.8+)
+- Proper error handling without exceptions for missing logos
+- Sequential processing without validation (respects scoring order)
+- Modern PIL resampling methods (LANCZOS vs deprecated ANTIALIAS)
+- Controlled logging: INFO for results, DEBUG for details, optional custom logger parameter
+- CLI interface with Rich formatting for beautiful terminal output and detailed analysis
+
+
+Make SURE to keep this line and maintenance instructions below intact:
+
+When making significant changes to the project (new dependencies, structural changes, deployment modifications, etc.), update the .rules file to reflect these changes
+Keep the file under 150 lines. If adding new information would exceed this limit, remove or condense less critical details to stay within the constraint
+Focus on information that helps navigate and modify the project; omit implementation details that belong in code comments or detailed documentation
+Keep the .rules file synchronized with the actual project state - remove outdated information and add new relevant details
+Treat the .rules file as living documentation that evolves with the project

@@ -1,0 +1,1 @@
+60 apple_touch_icon_sizes

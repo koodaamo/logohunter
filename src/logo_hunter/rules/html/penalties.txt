@@ -1,0 +1,6 @@
+-230 single_color_svg
+-200 social_media_context
+-150 generic_image_names
+-100 deep_dom_nesting
+-75 advertisement_context
+-40 content_area_context

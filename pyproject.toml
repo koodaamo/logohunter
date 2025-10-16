@@ -1,0 +1,127 @@
+[build-system]
+requires = ["uv_build>=0.9.3,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "logo-hunter"
+version = "0.1.0"
+description = "A modern, async Python library for fetching and processing customer logos from websites."
+authors = [
+    { name = "LogoHunter Team", email = "team@logohunter.dev" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.24.1",
+    "selectolax>=0.3.29",
+    "Pillow>=9.5.0",
+    "rich>=13.0.0",
+]
+keywords = ["logo", "web scraping", "image processing", "async", "httpx", "favicon"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Graphics",
+    "Framework :: AsyncIO",
+]
+
+[project.scripts]
+logohunt = "logohunt:cli_entry"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yourusername/logo-hunter"
+"Documentation" = "https://github.com/yourusername/logo-hunter#readme"
+"Repository" = "https://github.com/yourusername/logo-hunter"
+"Bug Tracker" = "https://github.com/yourusername/logo-hunter/issues"
+"Changelog" = "https://github.com/yourusername/logo-hunter/releases"
+
+[tool.uv.build-backend]
+wheel-exclude = ["test_*.py", "**/test_*.py", "tests/", "**/tests/"]
+source-exclude = ["__pycache__/", "*.pyc", "*.pyo", ".pytest_cache/"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.pyi?$'
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["src"]
+markers = [
+    "asyncio: mark test as async"
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/test_*.py",
+    "*/tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
