@@ -22,10 +22,11 @@ class TestAsyncLogoHunter(unittest.IsolatedAsyncioTestCase):
         )
 
         # Check that rules have proper format
-        for rule_func, rule_label in engine.rules:
+        for rule_func, rule_label, rule_value in engine.rules:
             self.assertTrue(callable(rule_func), "Rule should be callable")
             self.assertIsInstance(rule_label, str, "Rule label should be string")
             self.assertTrue(len(rule_label) > 0, "Rule label should not be empty")
+            self.assertIsInstance(rule_value, int, "Rule value should be integer")
 
     def test_rule_based_scoring(self):
         """Test the new rule-based scoring system."""
@@ -361,7 +362,7 @@ class TestAsyncLogoHunter(unittest.IsolatedAsyncioTestCase):
 
     @pytest.mark.asyncio
     async def test_fetch_best_logo_svg_skip(self):
-        """Test that SVG images are skipped in current implementation."""
+        """Test that SVG images are processed correctly."""
         logo_urls = ["https://example.com/logo.svg"]
 
         with patch("httpx.AsyncClient") as mock_client_class:
@@ -373,13 +374,16 @@ class TestAsyncLogoHunter(unittest.IsolatedAsyncioTestCase):
             response.status_code = 200
             response.headers = {"Content-Type": "image/svg+xml"}
             response.raise_for_status = MagicMock()
+            response.content.decode.return_value = '<svg><path d="M0,0"/></svg>'
             mock_client.get.return_value = response
 
             hunter = LogoHunter()
             best_logo = await hunter.fetch_best_logo(logo_urls)
 
-            # Should be None since SVG processing is not implemented
-            self.assertIsNone(best_logo)
+            # Should return SVG content since SVG processing is now implemented
+            self.assertIsNotNone(best_logo)
+            self.assertIsInstance(best_logo, str)
+            self.assertEqual(best_logo, '<svg><path d="M0,0"/></svg>')
 
     def test_process_image(self):
         """Test image processing."""
