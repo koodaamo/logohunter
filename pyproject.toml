@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "logohunter"
-version = "0.1.0"
+version = "0.1.1"
 description = "A modern, async Python library for fetching and processing customer logos from websites."
 authors = [
     { name = "LogoHunter Team", email = "team@logohunter.dev" }
