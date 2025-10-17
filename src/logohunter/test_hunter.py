@@ -4,8 +4,7 @@ import json
 import logging
 import pytest
 from unittest.mock import patch, AsyncMock, MagicMock
-from logo_hunter.hunter import LogoHunter, Icon
-from logo_hunter.scoring import get_scoring_engine
+from logohunter import LogoHunter, Icon, get_scoring_engine
 from io import BytesIO
 from PIL import Image
 import httpx

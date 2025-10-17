@@ -22,7 +22,7 @@ from rich.text import Text
 from rich.columns import Columns
 from rich.align import Align
 
-from logo_hunter.hunter import LogoHunter, Icon
+from logohunter import LogoHunter, Icon
 
 
 def setup_logging(verbose: bool = False) -> None:

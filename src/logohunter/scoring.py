@@ -34,7 +34,7 @@ class ScoringEngine:
                 bonus_values = self._load_rule_values(bonus_values_file)
                 self.rule_values.update(bonus_values)
 
-                bonus_module_path = f"logo_hunter.rules.{category_name}.bonus"
+                bonus_module_path = f"logohunter.rules.{category_name}.bonus"
                 try:
                     bonus_module = importlib.import_module(bonus_module_path)
                     self._load_rules_from_module(
@@ -51,7 +51,7 @@ class ScoringEngine:
                 penalty_values = self._load_rule_values(penalty_values_file)
                 self.rule_values.update(penalty_values)
 
-                penalty_module_path = f"logo_hunter.rules.{category_name}.penalty"
+                penalty_module_path = f"logohunter.rules.{category_name}.penalty"
                 try:
                     penalty_module = importlib.import_module(penalty_module_path)
                     self._load_rules_from_module(
